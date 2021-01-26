@@ -1,61 +1,64 @@
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Serialization;
 using UnityEngine.UI;
 
-public class GoalTrigger2 : MonoBehaviour
+namespace Scenes.GamePlay
 {
-    public int P1Goals = 0;
-    public Text scoreText;
-    private float PenaltyTimer;
-    [SerializeField] Text P2Penalty;
-    [SerializeField] Text P2Penalty2;
-
-    void Start()
+    public class GoalTrigger2 : MonoBehaviour
     {
-    }
+        [FormerlySerializedAs("P1Goals")] public int p1Goals = 0;
+        public Text scoreText;
+        private float _penaltyTimer;
+        [FormerlySerializedAs("P2Penalty")] [SerializeField] Text p2Penalty;
+        [FormerlySerializedAs("P2Penalty2")] [SerializeField] Text p2Penalty2;
 
-    public void OnTriggerEnter2D(Collider2D collision)
-    {
-        if (collision.gameObject.tag == "Ball" && Timer.GameOver == false )
+        void Start()
         {
-            P1Goals++;
-            scoreText.text = P1Goals.ToString();
         }
-        PenaltyTimer = 3f;
-    }
-    public void OnTriggerStay2D(Collider2D collision)
-    {
-       
-        if (collision.gameObject.tag == "Player2")
+
+        public void OnTriggerEnter2D(Collider2D collision)
         {
+            if (collision.gameObject.CompareTag("Ball") && Timer.GameOver == false )
+            {
+                p1Goals++;
+                scoreText.text = p1Goals.ToString();
+            }
+            _penaltyTimer = 3f;
+        }
+        public void OnTriggerStay2D(Collider2D collision)
+        {
+       
+            if (collision.gameObject.CompareTag("Player2"))
+            {
            
-            PenaltyTimer -= Time.deltaTime;
-        }
-        if (collision.gameObject.tag == "Player2" && Timer.GameOver == false && PenaltyTimer < 0)
-        {
+                _penaltyTimer -= Time.deltaTime;
+            }
+            if (collision.gameObject.CompareTag("Player2") && Timer.GameOver == false && _penaltyTimer < 0)
+            {
             
-            P1Goals++;
-            PenaltyTimer = 3f;
-            P2Penalty.text = "1 Point Penalty for Staying";
-            P2Penalty2.text = "in your Goal too Long!";
-            scoreText.text = P1Goals.ToString();
-            StartCoroutine(ExtraTime());
+                p1Goals++;
+                _penaltyTimer = 3f;
+                p2Penalty.text = "1 Point Penalty for Staying";
+                p2Penalty2.text = "in your Goal too Long!";
+                scoreText.text = p1Goals.ToString();
+                StartCoroutine(ExtraTime());
+
+            }
+        }
+        IEnumerator ExtraTime()
+        {
+            yield return new WaitForSeconds(3f);
+            p2Penalty.text = "";
+            p2Penalty2.text = "";
+
 
         }
-    }
-    IEnumerator ExtraTime()
-    {
-        yield return new WaitForSeconds(3f);
-        P2Penalty.text = "";
-        P2Penalty2.text = "";
 
 
-    }
-
-
-    void Update()
-    {
+        void Update()
+        {
        
+        }
     }
 }
